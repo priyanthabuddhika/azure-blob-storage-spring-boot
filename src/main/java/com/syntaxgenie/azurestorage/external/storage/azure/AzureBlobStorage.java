@@ -23,8 +23,10 @@ class AzureBlobStorage implements Storage {
 
     @Override
     public String upload(InputStream data, StoragePath storagePath, String fileName) {
-        getBlobClient(storagePath, fileName).upload(data, true);
-        return generateResourceUrl(storagePath, fileName);
+       BlobClient blobClient = getBlobClient(storagePath, fileName);
+       blobClient.upload(data, true);
+
+        return blobClient.getBlobUrl();
     }
 
     @Override
@@ -34,9 +36,5 @@ class AzureBlobStorage implements Storage {
 
     private BlobClient getBlobClient(final StoragePath storagePath, final String blobName) {
         return blobContainerClient.getBlobClient(storagePath.getValue() + blobName);
-    }
-
-    private String generateResourceUrl(final StoragePath storagePath, final String blobName) {
-        return blobContainerClient.getBlobContainerUrl() + "/" + storagePath.getValue() + blobName;
     }
 }
